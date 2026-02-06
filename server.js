@@ -1,34 +1,54 @@
-const express = require("express");
-const cors = require("cors");
+import express from "express";
+import cors from "cors";
 
 const app = express();
-app.use(cors());
+const PORT = process.env.PORT || 10000;
+
+/* ===== MIDDLEWARE ===== */
+app.use(cors({
+  origin: "*",   // Netlify ko allow
+  methods: ["GET", "POST"],
+}));
 app.use(express.json());
 
-// TEST ROUTE
+/* ===== TEST ROUTE ===== */
 app.get("/", (req, res) => {
-  res.json({ status: "Indixa Backend Connected ✅" });
-});
-
-// USERS API
-app.get("/api/users", (req, res) => {
-  res.json([
-    { id: 1, name: "User One" },
-    { id: 2, name: "User Two" }
-  ]);
-});
-
-// LOGIN API
-app.post("/api/login", (req, res) => {
-  const { phone } = req.body;
   res.json({
-    success: true,
-    message: "Login successful",
-    phone
+    status: "OK",
+    message: "Indixa Backend is running 🚀"
   });
 });
 
-const PORT = process.env.PORT || 10000;
+/* ===== HEALTH CHECK ===== */
+app.get("/health", (req, res) => {
+  res.json({ success: true });
+});
+
+/* ===== USERS API ===== */
+app.get("/api/users", (req, res) => {
+  res.json({
+    users: [
+      { id: 1, name: "Parvaiz" },
+      { id: 2, name: "Indixa User" }
+    ]
+  });
+});
+
+/* ===== LOGIN API ===== */
+app.post("/api/login", (req, res) => {
+  const { email, password } = req.body;
+
+  if (email && password) {
+    return res.json({
+      success: true,
+      token: "dummy-jwt-token"
+    });
+  }
+
+  res.status(400).json({ error: "Invalid credentials" });
+});
+
+/* ===== START SERVER ===== */
 app.listen(PORT, () => {
-  console.log("🚀 Backend running on port", PORT);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
