@@ -1,29 +1,34 @@
-import express from "express";
-import cors from "cors";
-
-import userRoutes from "./user.routes.js";
-import partnerRoutes from "./partner.routes.js";
-import adminRoutes from "./admin.routes.js";
-import paymentRoutes from "./payment.routes.js";
+const express = require("express");
+const cors = require("cors");
 
 const app = express();
-
 app.use(cors());
 app.use(express.json());
 
+// TEST ROUTE
 app.get("/", (req, res) => {
+  res.json({ status: "Indixa Backend Connected ✅" });
+});
+
+// USERS API
+app.get("/api/users", (req, res) => {
+  res.json([
+    { id: 1, name: "User One" },
+    { id: 2, name: "User Two" }
+  ]);
+});
+
+// LOGIN API
+app.post("/api/login", (req, res) => {
+  const { phone } = req.body;
   res.json({
-    status: "OK",
-    service: "Indixa Backend Running"
+    success: true,
+    message: "Login successful",
+    phone
   });
 });
 
-app.use("/api/users", userRoutes);
-app.use("/api/partners", partnerRoutes);
-app.use("/api/admin", adminRoutes);
-app.use("/api/payments", paymentRoutes);
-
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 10000;
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log("🚀 Backend running on port", PORT);
 });
